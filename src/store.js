@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
 import router from './router'
+import _ from 'lodash'
 
 Vue.use(Vuex)
 
@@ -58,10 +59,11 @@ export default new Vuex.Store({
             try {
                 const {data} = await Axios.post('/savebooks', payload)
                 commit('insertBook', data)
-                alert('A könyv sikeresen felvéve')
                 router.push({name: "book"})
+                alert('A könyv sikeresen felvéve')
             } catch (e) {
-                alert('Hiba történt. Lehet, hogy nincs megfelelően kitöltve minden mező')
+                console.log(e)
+                alert('Hiba történt. Lehet, hogy nincs megfelelően kitöltve minden mező, vagy a könyv már megtalálható a könyvtárban')
             }
         },
         async rentBook({commit}, payload) {
