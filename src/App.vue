@@ -1,4 +1,4 @@
-<template>
+<template v-if="show">
   <v-app>
     <v-navigation-drawer
       persistent
@@ -9,12 +9,20 @@
       fixed
       app
     >
+
       <v-list>
+        <v-list-tile avatar>
+          <v-list-tile-avatar>
+            <v-icon>mdi-account</v-icon>
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title>{{actualUserData.firstName}}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile
-          value="true"
-          v-for="(item, i) in items"
-          :key="i"
-        >
+                value="true"
+                v-for="(item, i) in items" v-if="actualUserData.id != 0"
+                :key="i.title"  router exact :to="item.to">
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
           </v-list-tile-action>
@@ -22,27 +30,24 @@
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile avatar v-if="actualUserData.id != 0" @click="logout()">
+          <v-list-tile-avatar>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title>Kilépés</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
+
     </v-navigation-drawer>
     <v-toolbar
       app
-      :clipped-left="clipped"
-    >
+      :clipped-left="clipped">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'mdi-chevron-right' : 'mdi-chevron-left'"></v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>mdi-web</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
+      <v-spacer></v-spacer>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-toolbar>
     <v-content>
       <router-view/>
@@ -64,29 +69,47 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app>
-      <span>&copy; 2017</span>
+      <span>&copy; Bobby</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
 
+import VListTile from "vuetify/lib/components/VList/VListTile";
+import VListTileAction from "vuetify/lib/components/VList/VListTileAction";
+
 export default {
-  name: 'App',
+    components: {
+        VListTileAction,
+        VListTile},
+    name: 'App',
   data () {
     return {
+        show: true,
       clipped: false,
       drawer: true,
       fixed: false,
-      items: [{
-        icon: 'mdi-chart-bubble',
-        title: 'Inspire'
-      }],
+      items: [
+          { divider: true, inset: false },
+          { title: 'Új könyv felvétele', icon: 'mdi-owl', to: { name: 'book'}},
+          { title: 'Kölcsönzés', icon: 'mdi-book',  to: { name: 'rent'}}],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'Digitális Könyvtár'
     }
-  }
+  },
+    computed: {
+        actualUserData () {
+                return this.$store.state.actualUser
+        }
+    },
+    methods: {
+            logout(){
+                this.$store.dispatch('logout')
+                this.$router.push({name: 'login'})
+            }
+    }
 }
 </script>
