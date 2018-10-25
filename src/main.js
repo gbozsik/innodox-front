@@ -15,20 +15,20 @@ Axios.defaults.baseURL = '/api'
 Axios.defaults.headers.common.Accept = 'application/json'
 
 
-
-
 Vue.$http = Axios
 Object.defineProperty(Vue.prototype, '$http', {
     get() {
         return Axios;
     }
-})
+});
 
-// router.beforeEach(()=> {
-//     if(store.state.actualUserData.id == 0){
-//         router.push({name: "login"})
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    if(store.state.actualUser ==="" || store.state.actualUser.id === 0 && to.name !== 'login'){
+        next({name: "login"});
+    }else{
+        next();
+    }
+});
 
 // Startup store actions
 store.dispatch('getActualUser');

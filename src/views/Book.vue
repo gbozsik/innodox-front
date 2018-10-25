@@ -153,7 +153,7 @@
         methods: {
             saveBook() {
                 this.$store.dispatch("saveBook", this.form.book.bookToSave);
-                console.log('bookTosSave: ', this.form.book.bookToSave)
+                this.form.book.bookToSave = {}
             },
         }
     }

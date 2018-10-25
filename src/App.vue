@@ -13,10 +13,10 @@
       <v-list>
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <v-icon>mdi-account</v-icon>
+            <v-icon color="light-blue">mdi-account</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
-            <v-list-tile-title>{{actualUserData.firstName}}</v-list-tile-title>
+            <v-list-tile-title color="red">{{actualUserData.firstName}}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile

@@ -198,13 +198,11 @@
         },
 
         methods: {
-            prefaceDialogShow(item) {
-                console.log('item: ', item)
+            prefaceDialogShow(item) {               //Előszó ablakot nyitja
                 this.selectedItem = item
                 this.prefaceDialog.state = true
             },
-            bookListDialogShow(item) {
-                console.log('item: ', item)
+            bookListDialogShow(item) {              //Könyvlista ablakot nyitja
                 this.selectedItem2 = item
                 this.boookListDialog.state = true
             },
@@ -216,16 +214,12 @@
                 this.boookListDialog.state = false
                 this.selectedItem2 = null
             },
-            rent(item) {
-                this.$store.dispatch("rentBook", item);
-                console.log(this.selectedItem);
-                console.log(item);
+            rent(item) {                                  //KÖlcsönzést dispatch-olja a a store.js-ben a  rentBook async action-el ami
+                this.$store.dispatch("rentBook", item);   //meghívja a backend-et, majd a loadBook mutáció újratölti a listát
                 this.bookListDialogShow(item)
-                console.log('bookListDialogShow');
             },
-            giveBackBook(item) {
+            giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
                 this.$store.dispatch("giveBack", item);
-                console.log('bookListDialogShow');
                 this.bookListDialogShow()
             }
         }

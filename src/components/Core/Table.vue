@@ -19,7 +19,7 @@
                </template>
           </td>
         </template>
-          <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          <v-alert slot="no-results" :value="true" color="error" icon="mdi-eye">
             Nincs találat a(z) "{{ search }}" kifejezésre.
           </v-alert>
         </v-data-table>

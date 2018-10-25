@@ -14,7 +14,7 @@
                                               <v-text-field label="E-mail" required v-model="loginData.username"></v-text-field>
                                           </v-flex>
                                           <v-flex xs12 sm12>
-                                              <v-text-field label="Jelszó" required v-model="loginData.password"></v-text-field>
+                                              <v-text-field type="password" label="Jelszó" required v-model="loginData.password"></v-text-field>
                                           </v-flex>
                                           <v-flex xs12 sm4 text-xs-center>
                                               <div>

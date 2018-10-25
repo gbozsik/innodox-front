@@ -59,11 +59,10 @@ export default new Vuex.Store({
             try {
                 const {data} = await Axios.post('/savebooks', payload)
                 commit('insertBook', data)
-                router.push({name: "book"})
                 alert('A könyv sikeresen felvéve')
             } catch (e) {
-                console.log(e)
-                alert('Hiba történt. Lehet, hogy nincs megfelelően kitöltve minden mező, vagy a könyv már megtalálható a könyvtárban')
+                console.log(e.response.data.message)
+                alert(e.response.data.message)
             }
         },
         async rentBook({commit}, payload) {
@@ -71,9 +70,6 @@ export default new Vuex.Store({
                 const {data} = await Axios.post('/rentbook', payload)
                 commit('loadBooks', data)
                 this.dispatch('getActualUser')
-                console.log('PAYLOAD:', payload)
-                console.log('rentBook')
-                console.log('actualuser in state: ', this.state.actualUser)
             } catch (e) {
                 alert(e.response.data.message)
             }
@@ -83,7 +79,6 @@ export default new Vuex.Store({
                 const {data} = await Axios.post('bringbackbook', payload)
                 commit('loadBooks', data)
                 this.dispatch('getActualUser')
-                console.log('giveBack');
             } catch (e) {
                 alert(e.response.data.message)
             }
@@ -91,34 +86,55 @@ export default new Vuex.Store({
         async getActualUser({commit}) {
             try {
                 const {data} = await Axios.get('getactualuser')
-                commit('loadActualUser', data)
-            }catch(e){
+                if (data === "") {
+                    commit('loadActualUser', defaultUser)
+                } else {
+                    commit('loadActualUser', data)
+                }
+                console.log('data: ', data)
+            } catch (e) {
                 console.log(e)
+                commit('loadActualUser', defaultUser)
             }
         },
-        async getUserToLogin({commit}) {
-            const {data} = await Axios.get('getactualuser')
-            commit('loadActualUser', data)
-            if (this.state.actualUser != null) {
-                router.push({name: "rent"})
-                console.log('in if')
-            }else{
-                alert('Hibás az e-mail, vagy jelszó')
-            }
-        },
+        // async getUserToLogin({commit}) {
+        //     commit('loadActualUser', data)
+        //     if (this.state.actualUser != null) {
+        //         router.push({name: "rent"})
+        //     } else {
+        //         alert('Hibás az e-mail, vagy jelszó')
+        //     }
+        // },
         async login({commit}, payload) {
-            Axios.defaults.auth =  {
+            const options = {
+                headers: { "X-Requested-By": true }
+            }
+            Axios.defaults.auth = {
                 username: payload.username,
                 password: payload.password
             }
-            this.dispatch('getUserToLogin')
-            commit('loadActualUser', payload)
+            try {
+                const {data} = await Axios.get('getactualuser', options)
+                commit('loadActualUser', data)
+                router.push({name: "rent"})
+            } catch (e) {
+                console.log(e)
+                alert('Hibás felhasználónév vagy jelszó')
+                commit('loadActualUser', defaultUser)
+            }
         },
         async logout({commit}) {
-            const payload = defaultUser
-            Axios.defaults.auth = {
+            try {
+                await Axios.get('loggingout')
+                Axios.defaults.auth = {}
+                commit('loadActualUser', defaultUser)
+                console.log('loggingout')
+            } catch (e) {
+                console.log(e)
             }
-            commit('loadActualUser', payload)
+            if (this.state.actualUser.id == 0) {
+                alert('Sikeres kijelentkezés')
+            }
         }
 
 
