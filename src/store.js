@@ -91,20 +91,11 @@ export default new Vuex.Store({
                 } else {
                     commit('loadActualUser', data)
                 }
-                console.log('data: ', data)
             } catch (e) {
                 console.log(e)
                 commit('loadActualUser', defaultUser)
             }
         },
-        // async getUserToLogin({commit}) {
-        //     commit('loadActualUser', data)
-        //     if (this.state.actualUser != null) {
-        //         router.push({name: "rent"})
-        //     } else {
-        //         alert('Hibás az e-mail, vagy jelszó')
-        //     }
-        // },
         async login({commit}, payload) {
             const options = {
                 headers: { "X-Requested-By": true }
@@ -116,7 +107,7 @@ export default new Vuex.Store({
             try {
                 const {data} = await Axios.get('getactualuser', options)
                 commit('loadActualUser', data)
-                router.push({name: "rent"})
+                router.push({name: "welcome"})
             } catch (e) {
                 console.log(e)
                 alert('Hibás felhasználónév vagy jelszó')
@@ -128,7 +119,6 @@ export default new Vuex.Store({
                 await Axios.get('loggingout')
                 Axios.defaults.auth = {}
                 commit('loadActualUser', defaultUser)
-                console.log('loggingout')
             } catch (e) {
                 console.log(e)
             }

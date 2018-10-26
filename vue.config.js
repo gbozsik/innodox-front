@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = {                              //fejelsztés alatt proxy-n keresztül hívta meg a backendet
     devServer: {
         host: '0.0.0.0',
         port: 4000,
@@ -7,7 +7,6 @@ module.exports = {
         proxy: {
             '/api': {
                 target: 'http://localhost:9000',
-                //pathRewrite: { '^/api/v1': '/api/v1' },
                 ws: true,
                 changeOrigin: true,
                 secure: false
