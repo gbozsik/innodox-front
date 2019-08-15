@@ -1,7 +1,4 @@
-
-
 <!--  KÖNYV FELÉVÉTEL FORM -->
-
 
 
 <template>
@@ -13,19 +10,62 @@
                         <h4 class="inputTitle">Felvétel</h4>
                         <v-layout wrap>
                             <v-flex xs12 sm8>
-                                <v-text-field label="Cím" required v-model="form.book.bookToSave.title"
+                                <v-text-field label="Title" required v-model="form.book.bookToSave.title"
                                               :rules="form.validation.rules.title"></v-text-field>
                             </v-flex>
                             <v-flex xs12 sm8>
-                                <v-text-field label="Szerző" required
-                                              v-model="form.book.bookToSave.author"
-                                              :rules="form.validation.rules.author"></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm8>
-                                <v-text-field label="Kiadó" required
+                                <v-text-field label="Publisher" required
                                               v-model="form.book.bookToSave.publisher"
                                               :rules="form.validation.rules.publisher"></v-text-field>
                             </v-flex>
+                            <v-card-text style="background-color: #DDB9DF">
+                                <v-flex xs12 sm6>
+                                    <v-select
+                                            :items="selectableAuthors"
+                                            clearable
+                                            item-text="name"
+                                            v-model="form.book.bookToSave.selectedAuthor"
+                                            label="Authors"
+                                            single-line
+                                            return-object
+                                            @change="authorVSelectChanged()">
+                                        <template slot="selection" slot-scope="data">
+                                            <v-list-tile-avatar>
+                                                <img :src="data.item.avatar">
+                                            </v-list-tile-avatar>
+                                            {{ data.item.firstName }} {{ data.item.lastName }}
+                                        </template>
+                                        <template slot="item" slot-scope="data">
+                                            <v-list-tile-avatar>
+                                                <img :src="data.item.avatar">
+                                            </v-list-tile-avatar>
+                                            {{ data.item.firstName }} {{ data.item.lastName }}
+                                        </template>
+                                    </v-select>
+                                </v-flex>
+                                <v-flex xs12 sm8>
+                                    <v-text-field ref="newAuthorFirstName"
+                                                  label="First name" required
+                                                  v-model="newAuthorFirstname"
+                                                  @change="newAuthorFieldsChange"
+                                                  :rules="form.validation.rules.authorModel"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12 sm8>
+                                    <v-text-field ref="newAuthorLastName"
+                                                  label="Last name" required
+                                                  v-model="newAuthorLastname"
+                                                  @change="newAuthorFieldsChange"
+                                                  :rules="form.validation.rules.authorModel"></v-text-field>
+                                </v-flex>
+                                <v-flex xs12 sm8>
+                                    <v-text-field ref="newAuthorAge"
+                                                  label="Age" required
+                                                  v-model="newAuthorAge"
+                                                  @change="newAuthorFieldsChange"
+                                                  :rules="form.validation.rules.authorAge"
+                                                  type="number"></v-text-field>
+                                </v-flex>
+                            </v-card-text>
                             <v-flex xs12 sm6>
                                 <v-select
                                         :items="selectableCategories"
@@ -101,8 +141,10 @@
 </template>
 
 <script>
-    import {required, positiveNum, isNumber, min2char, min50char, min100char, max200char,
-        min1000char, max5000char, numMax10} from '@/validation/validationRules'
+    import {
+        required, positiveNum, isNumber, min2char, min50char, min100char, max200char,
+        min1000char, max5000char, numMax10
+    } from '@/validation/validationRules'
     import {VCard, VCardText, VTextField, VSelect, VBtn, VTextarea} from 'vuetify/lib'
 
     export default {
@@ -118,21 +160,79 @@
 
         mounted() {
             this.$store.dispatch("getCategories");
+            this.$store.dispatch("getAuthors")
         },
         computed: {
+            clearAuthorFields() {
+                // return this.newAuthorFirstname =''
+                // this.newAuthorLastname = '',
+                // this.newAuthorAge = ''}
+            },
             selectableCategories() {
                 return this.$store.state.categories
+            },
+            selectableAuthors() {
+                return this.$store.state.authors
+            },
+        },
+
+        props: {
+            newAuthorFirstname: String,
+            newAuthorLastname: String,
+            newAuthorAge: String
+        },
+
+        methods: {
+            newAuthorFieldsChange() {
+                console.log(this.newAuthorFirstname)
+                if (_.isEmpty(this.form.book.bookToSave.selectedAuthor == null)) {
+                    this.form.book.bookToSave.authorModel.firstName = this.newAuthorFirstname
+                    this.form.book.bookToSave.authorModel.lastName = this.newAuthorLastname
+                    this.form.book.bookToSave.authorModel.age = this.newAuthorAge
+                    console.log(this.form.book.bookToSave.authorModel.firstName)
+                    console.log(this.form.book.bookToSave.authorModel.lastName)
+                    console.log(this.form.book.bookToSave.authorModel.age)
+                } else {
+                    this.form.book.bookToSave.authorModel = this.form.book.bookToSave.selectedAuthor
+                }
+            },
+            authorVSelectChanged() {
+                if (_.isEmpty(this.form.book.bookToSave.selectedAuthor)) {
+                    this.form.book.bookToSave.authorModel.firstName = this.$refs.newAuthorFirstName.value
+                    this.form.book.bookToSave.authorModel.lastName = this.$refs.newAuthorFirstName.value
+                    this.form.book.bookToSave.authorModel.firstName = this.$refs.newAuthorFirstName.value
+                    console.log(this.$refs.newAuthorFirstName.value)
+                    console.log("change")
+                } else {
+                    this.$refs.newAuthorFirstName.value = this.form.book.bookToSave.authorModel.firstName
+                    this.$refs.newAuthorFirstName.value = this.form.book.bookToSave.authorModel.lastName
+                    this.$refs.newAuthorFirstName.value = this.form.book.bookToSave.authorModel.firstName
+                }
+            },
+            saveBook() {
+                this.$store.dispatch("saveBook", this.form.book.bookToSave);
+                this.form.book.bookToSave = {}
             },
         },
 
         data() {
+            // let empty = {}
+
             return {
+                emptyVal: '',
                 form: {
                     book: {
                         categories: [],
+                        // authors: [],
                         bookToSave: {
                             title: '',
-                            author: '',
+                            selectedAuthor: {},
+                            authorModel: {
+                                firstName: '',
+                                lastName: '',
+                                age: '',
+                                // avatar: srcs[1]
+                            },
                             publisher: '',
                             category: {},
                             preface: '',
@@ -144,7 +244,8 @@
                         state: false,
                         rules: {
                             title: [required, min2char],
-                            author: [required, min2char],
+                            authorModel: [required, min2char],
+                            authorAge: [required, min2char],
                             publisher: [required, min2char],
                             category: [required],
                             quantity: [required, isNumber, positiveNum, numMax10],
@@ -156,12 +257,6 @@
             }
         },
 
-        methods: {
-            saveBook() {
-                this.$store.dispatch("saveBook", this.form.book.bookToSave);
-                this.form.book.bookToSave = {}
-            },
-        }
     }
 </script>
 

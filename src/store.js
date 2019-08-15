@@ -17,6 +17,7 @@ export default new Vuex.Store({
 
     state: {
         books: [],
+        authors: [],
         categories: [],
         actualUser: defaultUser,
         loginData: {}
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     getters: {
         categories: function (state) {
             return state.categories
+        },
+        authors: function (state) {
+            return state.authors
         },
     },
     mutations: {
@@ -39,6 +43,9 @@ export default new Vuex.Store({
         loadCategories: function (state, categories) {
             state.categories = categories
         },
+        loadAuthors: function (state, authors) {
+            state.authors = authors
+        },
         loadActualUser: function (state, user) {
             state.actualUser = user
         },
@@ -48,37 +55,38 @@ export default new Vuex.Store({
     },
     actions: {
         async getBooks({commit}) {
-            const {data} = await Axios.get('/getbooks')
+            const {data} = await Axios.get('/books')
             commit('loadBooks', data)
         },
         async getCategories({commit}) {
-            const {data} = await Axios.get('/getcategories')
+            const {data} = await Axios.get('/categories')
             commit('loadCategories', data)
+        },
+        async getAuthors({commit}) {
+            const {data} = await Axios.get('/authors')
+            commit('loadAuthors', data)
         },
         async saveBook({commit}, payload) {
             try {
-                const {data} = await Axios.post('/savebooks', payload)
+                const {data} = await Axios.post('/book', payload)
                 commit('insertBook', data)
-                alert('A könyv sikeresen felvéve')
+                alert('New book has saved')
             } catch (e) {
-                console.log(e.response.data.message)
                 alert(e.response.data.message)
             }
         },
         async rentBook({commit}, payload) {
             try {
-                const {data} = await Axios.post('/rentbook', payload)
-                commit('loadBooks', data)
-                this.dispatch('getActualUser')
+                const {data} = await Axios.get('/rent/' + payload)
+                commit('loadActualUser', data)
             } catch (e) {
                 alert(e.response.data.message)
             }
         },
         async giveBack({commit}, payload) {
             try {
-                const {data} = await Axios.post('bringbackbook', payload)
-                commit('loadBooks', data)
-                this.dispatch('getActualUser')
+                const {data} = await Axios.get('bringback/' + payload)
+                commit('loadActualUser', data)
             } catch (e) {
                 alert(e.response.data.message)
             }
@@ -86,14 +94,12 @@ export default new Vuex.Store({
         async getActualUser({commit}) {
             try {
                 const {data} = await Axios.get('getactualuser')
-                if (data === "") {
-                    commit('loadActualUser', defaultUser)
-                } else {
                     commit('loadActualUser', data)
-                }
+                console.log('loadActualUser' + data)
+                // }
             } catch (e) {
                 console.log(e)
-                commit('loadActualUser', defaultUser)
+                // commit('loadActualUser', defaultUser)
             }
         },
         async login({commit}, payload) {

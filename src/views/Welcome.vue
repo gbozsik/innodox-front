@@ -34,13 +34,13 @@
         },
         name: "welcome",
 
-        mounted() {
-            this.$store.dispatch("getCategories");
-        },
+        // mounted() {
+        //     this.$store.dispatch("getCategories");
+        // },
         computed: {
-            selectableCategories() {
-                return this.$store.state.categories
-            },
+            // selectableCategories() {
+            //     return this.$store.state.categories
+            // },
         },
 
         data() {
@@ -50,7 +50,7 @@
                         categories: [],
                         bookToSave: {
                             title: '',
-                            author: '',
+                            authorModel: '',
                             publisher: '',
                             category: {},
                             preface: '',
@@ -62,7 +62,7 @@
                         state: false,
                         rules: {
                             title: [required, min2char],
-                            author: [required, min2char],
+                            authorModel: [required, min2char],
                             publisher: [required, min2char],
                             category: [required],
                             quantity: [required, isNumber, positiveNum, numMax10],

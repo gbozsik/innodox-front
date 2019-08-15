@@ -21,7 +21,7 @@
 
                     <template slot="items" slot-scope="props">
                         <td>{{ props.item.title }}</td>
-                        <td class="text-xs-left">{{ props.item.author }}</td>
+                        <td class="text-xs-left">{{ props.item.authorModel.firstName + props.item.authorModel.lastName }}</td>
                         <td class="text-xs-left">{{ props.item.publisher }}</td>
                         <td class="text-xs-left">{{ props.item.category.name }}</td>
                         <td class="text-xs-center">{{ props.item.quantity }}</td>
@@ -94,8 +94,8 @@
                                                           :headers="boookListDialog.headers"
                                                           :items="usersBookList">
                                                 <template slot="items" slot-scope="props">
-                                                    <td>{{ props.item.title }}</td>
-                                                    <td class="text-xs-left">{{ props.item.author }}</td>
+                                                    <td class="text-xs-left">{{ props.item.title }}</td>
+                                                    <td class="text-xs-left">{{ props.item.authorModel.firstName }}</td>
                                                     <td class="text-xs-left">{{ props.item.publisher }}</td>
                                                     <td class="text-xs-left">{{ props.item.category.name }}</td>
                                                 </template>
@@ -129,7 +129,7 @@
                 return this.$store.state.books
             },
             usersBookList() {
-                return this.$store.state.actualUser.bookList
+                return this.$store.state.actualUser.bookModelList
             },
         },
 
@@ -158,7 +158,7 @@
                     rows_per_page: [50, 100, 150, {text: "Mind", value: -1}],
                     headers: [
                         {text: "Cím", value: "title", align: "left", sortable: true},
-                        {text: "Szerző", value: "author", align: "left", sortable: true},
+                        {text: "Szerző", value: "authorModel", align: "left", sortable: true},
                         {text: "Kiadó", value: "publisher", align: "left", sortable: true},
                         {text: "Kategória", value: "category", align: "left", sortable: true},
                         {text: "Darabszám", value: "quantity", align: "right", sortable: true},
@@ -188,7 +188,7 @@
                     ],
                     headers: [
                         {text: "Cím", value: "title", align: "left", sortable: true},
-                        {text: "Szerző", value: "author", align: "left", sortable: true},
+                        {text: "Szerző", value: "authorModel", align: "left", sortable: true},
                         {text: "Kiadó", value: "publisher", align: "left", sortable: true},
                         {text: "Kategória", value: "category", align: "left", sortable: true},
                     ]
@@ -214,11 +214,11 @@
                 this.selectedItem2 = null
             },
             rent(item) {                                  //KÖlcsönzést dispatch-olja a a store.js-ben a  rentBook async action-el ami
-                this.$store.dispatch("rentBook", item);   //meghívja a backend-et, majd a loadBook mutáció újratölti a listát
+                this.$store.dispatch("rentBook", item.id);   //meghívja a backend-et, majd a loadBook mutáció újratölti a listát
                 this.bookListDialogShow(item)
             },
-            giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
-                this.$store.dispatch("giveBack", item);
+                giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
+                this.$store.dispatch("giveBack", item.id);
                 this.bookListDialogShow()
             }
         }
