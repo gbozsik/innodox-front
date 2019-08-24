@@ -14,13 +14,15 @@ const defaultUser = {
 
 export default new Vuex.Store({
 
-
     state: {
         books: [],
         authors: [],
         categories: [],
         actualUser: defaultUser,
-        loginData: {}
+        loginData: {},
+        bookToSave: {},
+        errorMessage: '',
+        bookErrorMessage: ''
     },
 
     getters: {
@@ -32,12 +34,20 @@ export default new Vuex.Store({
         },
     },
     mutations: {
+        setBookToSave(state, bookToSave) {
+            state.bookToSave = bookToSave
+        },
         loadBooks: function (state, books) {
             state.books = books
         },
         insertBook: function (state, book) {
             let books2 = _.cloneDeep(state.books)
             books2.push(book)
+            state.books = books2
+        },
+        removeBook(state, book) {
+            let books2 = _.cloneDeep(state.books)
+            books2.pop(book)
             state.books = books2
         },
         loadCategories: function (state, categories) {
@@ -51,6 +61,18 @@ export default new Vuex.Store({
         },
         loadLoginData: function (state, loginData) {
             state.loginData = loginData
+        },
+        setErrorMessage: function (state, message) {
+            state.errorMessage = message
+        },
+        setBookErrorMessage: function (state, message) {
+            state.bookErrorMessage = message
+        },
+        resetErrorMessage: function (state) {
+            state.errorMessage = ''
+        },
+        resetBookErrorMessage: function (state) {
+            state.bookErrorMessage = ''
         }
     },
     actions: {
@@ -72,7 +94,15 @@ export default new Vuex.Store({
                 commit('insertBook', data)
                 alert('New book has saved')
             } catch (e) {
-                alert(e.response.data.message)
+                commit('setBookErrorMessage', e.response.data.message)
+            }
+        },
+        async deleteBook({commit}, id) {
+            try {
+                const {data} = await Axios.delete("/book/" + id)
+                commit('removeBook', data)
+            } catch (e) {
+                commit('setBookErrorMessage', e.response.data.message)
             }
         },
         async rentBook({commit}, payload) {
@@ -80,7 +110,7 @@ export default new Vuex.Store({
                 const {data} = await Axios.get('/rent/' + payload)
                 commit('loadActualUser', data)
             } catch (e) {
-                alert(e.response.data.message)
+                commit('setErrorMessage', e.response.data.message)
             }
         },
         async giveBack({commit}, payload) {
@@ -88,18 +118,15 @@ export default new Vuex.Store({
                 const {data} = await Axios.get('bringback/' + payload)
                 commit('loadActualUser', data)
             } catch (e) {
-                alert(e.response.data.message)
+                commit('setErrorMessage', e.response.data.message)
             }
         },
         async getActualUser({commit}) {
             try {
                 const {data} = await Axios.get('getactualuser')
                     commit('loadActualUser', data)
-                console.log('loadActualUser' + data)
-                // }
             } catch (e) {
                 console.log(e)
-                // commit('loadActualUser', defaultUser)
             }
         },
         async login({commit}, payload) {
@@ -130,9 +157,8 @@ export default new Vuex.Store({
             }
             if (this.state.actualUser.id == 0) {
                 alert('Sikeres kijelentkezés')
+                commit('setErrorMessage', "Sikeres kijelentkezés")
             }
-        }
-
-
+        },
     }
 })

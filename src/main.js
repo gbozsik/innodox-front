@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 import Vue from 'vue'
 import './plugins/vuetify'
-import App from './App.vue'
+import App from './app/App.vue'
 import router from './router'
 import store from './store'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -24,6 +24,7 @@ Object.defineProperty(Vue.prototype, '$http', {
 
 router.beforeEach((to, from, next) => {
     if(store.state.actualUser.firstName === "Nincs bejelentkezve" || store.state.actualUser.id === 0 && to.name !== 'login'){
+
         next({name: "login"});
     }else{
         next();
@@ -34,9 +35,8 @@ router.beforeEach((to, from, next) => {
 store.dispatch('getActualUser');
 
 
-
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')

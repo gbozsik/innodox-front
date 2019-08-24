@@ -23,7 +23,7 @@
                         <td>{{ props.item.title }}</td>
                         <td class="text-xs-left">{{ props.item.authorModel.firstName + props.item.authorModel.lastName }}</td>
                         <td class="text-xs-left">{{ props.item.publisher }}</td>
-                        <td class="text-xs-left">{{ props.item.category.name }}</td>
+                        <td class="text-xs-left">{{ props.item.categoryModel.name }}</td>
                         <td class="text-xs-center">{{ props.item.quantity }}</td>
 
                         <td class="text-xs-right">
@@ -53,76 +53,78 @@
                 :title=selectedItem.title
                 color="teal lighten-1"
                 :show="prefaceDialog.state"
+                :width="800"
                 :actions="prefaceDialog.actions">
-
-            <v-card>
-                <v-card-text>
-                    <v-container grid-list-md>
-                        <v-layout wrap>
-                            <v-card-text>
-                                <!--<pre> {{ selectedItem }} </pre>-->
-                                <v-container grid-list-md>
-                                    <v-layout wrap>
-                                        <v-flex xs12>
-                                            <v-textarea label="Előszó" required v-model="selectedItem.preface"
-                                                        readonly></v-textarea>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card-text>
-                        </v-layout>
-                    </v-container>
-                </v-card-text>
-            </v-card>
+            <v-container bg ill-height grid-list-md text-xs-center text-size
+                         class="dialog-container">
+                <v-layout row wrap align-center>
+                    <v-flex style="font-size: x-large; font-family: Arial">
+                        {{ selectedItem.preface }}
+                    </v-flex>
+                </v-layout>
+            </v-container>
         </Dialog>
-        <Dialog v-if="selectedItem2 !== null"
+
+        <Dialog class="dialog-container"
+                v-if="selectedItem !== null"
                 :title=boookListDialog.title
                 color="teal lighten-1"
                 :show="boookListDialog.state"
                 :actions="boookListDialog.actions">
-
             <v-card>
                 <v-card-text>
-                    <v-container grid-list-md>
-                        <v-layout wrap>
-                            <v-card-text>
-                                <!--<pre> {{ selectedItem }} </pre>-->
-                                <v-container grid-list-md>
-                                    <v-layout wrap>
-                                        <v-flex xs12>
-                                            <v-data-table :title="title"
-                                                          :headers="boookListDialog.headers"
-                                                          :items="usersBookList">
-                                                <template slot="items" slot-scope="props">
-                                                    <td class="text-xs-left">{{ props.item.title }}</td>
-                                                    <td class="text-xs-left">{{ props.item.authorModel.firstName }}</td>
-                                                    <td class="text-xs-left">{{ props.item.publisher }}</td>
-                                                    <td class="text-xs-left">{{ props.item.category.name }}</td>
-                                                </template>
-                                            </v-data-table>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-container>
-                            </v-card-text>
-                        </v-layout>
-                    </v-container>
+                    <v-flex xs12>
+                        <v-data-table class="bookListTable"
+                                :title="title"
+                                :headers="boookListDialog.headers"
+                                :items="usersBookList">
+                            <template slot="items" slot-scope="props">
+                                <td class="text-xs-left">{{ props.item.title }}</td>
+                                <td class="text-xs-left">{{ props.item.authorModel.firstName }}</td>
+                                <td class="text-xs-left">{{ props.item.publisher }}</td>
+                                <td class="text-xs-left">{{ props.item.categoryModel.name }}</td>
+                            </template>
+                        </v-data-table>
+                    </v-flex>
                 </v-card-text>
             </v-card>
         </Dialog>
-    </v-container>
 
+        <Dialog
+                class="dialog"
+                :title=bookErrorDialog.title
+                color="warning"
+                :show="errorMessage !== ''"
+                :width="400"
+                :actions="bookErrorDialog.actions">
+            <v-container class="dialog-container"
+                         bg fill-height grid-list-md text-xs-center text-size>
+                <v-layout row wrap align-center>
+                    <v-flex style="font-size: x-large; font-family: Arial">
+                        {{ errorMessage }}
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </Dialog>
+    </v-container>
 </template>
+
+<style>
+    .dialog-container {
+        background-color: bisque;
+    }
+</style>
 
 <script>
     import {VCard, VCardText, VTextField, VDataTable, VCardTitle, VAlert, VTextarea, VDialog} from 'vuetify/lib'
-    import _ from 'lodash'
+    // import _ from 'lodash'
     import Table from '@/components/Core/Table'
     import Dialog from '@/components/Core/Dialog'
 
     export default {
-        mounted() {
-            this.$store.dispatch("getBooks");
-        },
+        // mounted() {
+        //     this.$store.dispatch("getBooks");
+        // },
 
         computed: {
             items() {
@@ -131,6 +133,9 @@
             usersBookList() {
                 return this.$store.state.actualUser.bookModelList
             },
+            errorMessage() {
+                return this.$store.state.errorMessage
+            }
         },
 
         components: {
@@ -148,10 +153,9 @@
 
         data() {
             return {
-                title: "Könyvek",
+                title: "Books",
                 editDialogState: false,
                 selectedItem: null,
-                selectedItem2: null,
                 table: {
                     selectedItem: null,
                     search: "",
@@ -165,6 +169,17 @@
                         {text: "Előszó", value: "actions", align: "right", sortable: false},
                         {text: "Kölcsönzés", value: "actions", align: "right", sortable: false},
                         {text: "Visszhoztam", value: "actions", align: "right", sortable: false},
+                    ]
+                },
+
+                bookErrorDialog: {
+                    state: this.errorMessage !== '',
+                    title: "Warning",
+                    actions: [
+                        {
+                            text: "Ok",
+                            click: this.errorDialogClose,
+                        }
                     ]
                 },
 
@@ -197,13 +212,18 @@
         },
 
         methods: {
+            errorDialogClose() {
+                this.$store.commit('resetErrorMessage')
+            },
             prefaceDialogShow(item) {               //Előszó ablakot nyitja
                 this.selectedItem = item
                 this.prefaceDialog.state = true
             },
-            bookListDialogShow(item) {              //Könyvlista ablakot nyitja
-                this.selectedItem2 = item
+            bookListDialogShow(item) {
+                // if (this.errorMessage !== '') {
+                this.selectedItem = item
                 this.boookListDialog.state = true
+                // }
             },
             prefaceDialogClose() {
                 this.prefaceDialog.state = false
@@ -211,15 +231,15 @@
             },
             bookListDialogClose() {
                 this.boookListDialog.state = false
-                this.selectedItem2 = null
+                this.selectedItem = null
             },
             rent(item) {                                  //KÖlcsönzést dispatch-olja a a store.js-ben a  rentBook async action-el ami
                 this.$store.dispatch("rentBook", item.id);   //meghívja a backend-et, majd a loadBook mutáció újratölti a listát
                 this.bookListDialogShow(item)
             },
-                giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
+            giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
                 this.$store.dispatch("giveBack", item.id);
-                this.bookListDialogShow()
+                this.bookListDialogShow(item)
             }
         }
     }

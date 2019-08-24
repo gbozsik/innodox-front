@@ -1,7 +1,4 @@
-
-
 <!--  KÖNYV FELÉVÉTEL FORM -->
-
 
 
 <template>
@@ -19,8 +16,10 @@
 </template>
 
 <script>
-    import {required, positiveNum, isNumber, min2char, min50char, min100char, max200char,
-        min1000char, max5000char, numMax10} from '@/validation/validationRules'
+    import {
+        required, positiveNum, isNumber, min2char, min50char, min100char, max200char,
+        min1000char, max5000char, numMax10
+    } from '@/validation/validationRules'
     import {VCard, VCardText, VTextField, VSelect, VBtn, VTextarea} from 'vuetify/lib'
 
     export default {
@@ -34,41 +33,38 @@
         },
         name: "welcome",
 
-        // mounted() {
-        //     this.$store.dispatch("getCategories");
-        // },
-        computed: {
-            // selectableCategories() {
-            //     return this.$store.state.categories
-            // },
+        mounted() {
+            this.$store.dispatch("getBooks");
         },
 
         data() {
             return {
-                form: {
-                    book: {
-                        categories: [],
-                        bookToSave: {
-                            title: '',
-                            authorModel: '',
-                            publisher: '',
-                            category: {},
-                            preface: '',
-                            content: '',
-                            quantity: ''
-                        }
-                    },
-                    validation: {
-                        state: false,
-                        rules: {
-                            title: [required, min2char],
-                            authorModel: [required, min2char],
-                            publisher: [required, min2char],
-                            category: [required],
-                            quantity: [required, isNumber, positiveNum, numMax10],
-                            preface: [required, min50char, max200char],
-                            content: [required, min100char, max5000char],
-                        }
+                // form: {
+                //     book: {
+                //         title: '',
+                //         authorModel: {
+                //             id: '',
+                //             firstName: '',
+                //             lastName: '',
+                //             age: '',
+                //         },
+                //         publisher: '',
+                //         category: {},
+                //         preface: '',
+                //         content: '',
+                //         quantity: ''
+                //     }
+                // },
+                validation: {
+                    state: false,
+                    rules: {
+                        title: [required, min2char],
+                        authorModel: [required, min2char],
+                        publisher: [required, min2char],
+                        category: [required],
+                        quantity: [required, isNumber, positiveNum, numMax10],
+                        preface: [required, min50char, max200char],
+                        content: [required, min100char, max5000char],
                     }
                 }
             }

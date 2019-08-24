@@ -15,7 +15,7 @@
         </v-dialog>
     </template>
     <template v-else>
-        <v-dialog v-model="show" persistent>
+        <v-dialog v-model="show" persistent :width="width">
             <v-card>
                 <v-toolbar dark :color="color">
                     <v-toolbar-title>{{title}}</v-toolbar-title>
@@ -27,7 +27,7 @@
                 <slot></slot>
             </v-card>
         </v-dialog>
-    </template>  
+    </template>
     </div>
 </template>
 
@@ -40,6 +40,7 @@ export default {
         title:          { type: String, default: "Dialog title", required: true },
         color:          { type: String, default: "primary", required: false },
         fullscreen:     { type: Boolean, default: false, required: false },
+        width:          { type: Number, default: 1500, required: false },
         actions:        { type: Array, default: () => [], required: false },
     },
     components: {

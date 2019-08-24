@@ -37,8 +37,9 @@
 
 
 <script>
-    import {VCard, VCardText, VTextField, VDataTable, VCardTitle, VAlert, VTextarea, VDialog} from 'vuetify/lib'
+    import {VCard, VCardText, VTextField} from 'vuetify/lib'
     import Axios from 'axios'
+
 
     export default {
         components: {
@@ -47,6 +48,10 @@
             VCard
         },
         name: "login",
+
+        // computed: {
+        //     ...mapState('account', ['status'])
+        // },
 
         data() {
 
@@ -61,7 +66,15 @@
         methods: {
             login() {
                 this.$store.dispatch("login", this.loginData)
-            },
+            }
+            // ...mapActions('account', ['login', 'logout']),
+            // handleSubmit(e) {
+            //     this.submitted = true;
+            //     const {username, password} = this;
+            //     if (username && password) {
+            //         this.login({username, password})
+            //     }
+            // }
         }
     }
 </script>
