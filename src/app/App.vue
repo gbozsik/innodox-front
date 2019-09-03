@@ -35,7 +35,7 @@
                         <v-icon>mdi-logout</v-icon>
                     </v-list-tile-avatar>
                     <v-list-tile-content>
-                        <v-list-tile-title>Kilépés</v-list-tile-title>
+                        <v-list-tile-title>Sign out</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
@@ -93,12 +93,12 @@
                 fixed: false,
                 items: [
                     {divider: true, inset: false},
-                    {title: 'Új könyv felvétele', icon: 'mdi-owl', to: {name: 'book'}},
-                    {title: 'Kölcsönzés', icon: 'mdi-book', to: {name: 'rent'}}],
+                    {title: 'Books', icon: 'mdi-owl', to: {name: 'book'}},
+                    {title: 'Rent book', icon: 'mdi-book', to: {name: 'rent'}}],
                 miniVariant: false,
                 right: true,
                 rightDrawer: false,
-                title: 'Digitális Könyvtár'
+                title: 'Digital Library'
             }
         },
         computed: {

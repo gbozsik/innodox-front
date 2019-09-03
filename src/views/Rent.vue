@@ -5,7 +5,7 @@
                 <v-card-title><h2>{{title}}</h2>
                     <v-spacer></v-spacer>
                     <v-text-field append-icon="mdi-account-search"
-                                  label="Keresés"
+                                  label="Search"
                                   single-line hide-details
                                   v-model="table.search">
                     </v-text-field>
@@ -15,7 +15,7 @@
                               :headers="table.headers"
                               :items="items"
                               :search="table.search"
-                              rows-per-page-text="Sor / oldal"
+                              rows-per-page-text="Line / Page"
                               :rows-per-page-items="table.rows_per_page"
                               :must-sort="true">
 
@@ -117,14 +117,13 @@
 
 <script>
     import {VCard, VCardText, VTextField, VDataTable, VCardTitle, VAlert, VTextarea, VDialog} from 'vuetify/lib'
-    // import _ from 'lodash'
     import Table from '@/components/Core/Table'
     import Dialog from '@/components/Core/Dialog'
 
     export default {
-        // mounted() {
-        //     this.$store.dispatch("getBooks");
-        // },
+        mounted() {
+            this.$store.dispatch("getBooks");
+        },
 
         computed: {
             items() {
@@ -161,14 +160,14 @@
                     search: "",
                     rows_per_page: [50, 100, 150, {text: "Mind", value: -1}],
                     headers: [
-                        {text: "Cím", value: "title", align: "left", sortable: true},
-                        {text: "Szerző", value: "authorModel", align: "left", sortable: true},
-                        {text: "Kiadó", value: "publisher", align: "left", sortable: true},
-                        {text: "Kategória", value: "category", align: "left", sortable: true},
-                        {text: "Darabszám", value: "quantity", align: "right", sortable: true},
-                        {text: "Előszó", value: "actions", align: "right", sortable: false},
-                        {text: "Kölcsönzés", value: "actions", align: "right", sortable: false},
-                        {text: "Visszhoztam", value: "actions", align: "right", sortable: false},
+                        {text: "Title", value: "title", align: "left", sortable: true},
+                        {text: "Author", value: "authorModel", align: "left", sortable: true},
+                        {text: "Publisher", value: "publisher", align: "left", sortable: true},
+                        {text: "Category", value: "category", align: "left", sortable: true},
+                        {text: "Ammount", value: "quantity", align: "middle", sortable: true},
+                        {text: "Preface", value: "actions", align: "right", sortable: false},
+                        {text: "Renting", value: "actions", align: "right", sortable: false},
+                        {text: "Hand back", value: "actions", align: "right", sortable: false},
                     ]
                 },
 
@@ -194,7 +193,7 @@
                 },
                 boookListDialog: {
                     state: false,
-                    title: "Kikölcsönzött könyveinek listája",
+                    title: "Currently rented books",
                     actions: [
                         {
                             text: "Ok",
@@ -202,10 +201,10 @@
                         },
                     ],
                     headers: [
-                        {text: "Cím", value: "title", align: "left", sortable: true},
-                        {text: "Szerző", value: "authorModel", align: "left", sortable: true},
-                        {text: "Kiadó", value: "publisher", align: "left", sortable: true},
-                        {text: "Kategória", value: "category", align: "left", sortable: true},
+                        {text: "Title", value: "title", align: "left", sortable: true},
+                        {text: "Author", value: "authorModel", align: "left", sortable: true},
+                        {text: "Publisher", value: "publisher", align: "left", sortable: true},
+                        {text: "Category", value: "category", align: "left", sortable: true},
                     ]
                 },
             }
@@ -215,15 +214,13 @@
             errorDialogClose() {
                 this.$store.commit('resetErrorMessage')
             },
-            prefaceDialogShow(item) {               //Előszó ablakot nyitja
+            prefaceDialogShow(item) {
                 this.selectedItem = item
                 this.prefaceDialog.state = true
             },
             bookListDialogShow(item) {
-                // if (this.errorMessage !== '') {
                 this.selectedItem = item
                 this.boookListDialog.state = true
-                // }
             },
             prefaceDialogClose() {
                 this.prefaceDialog.state = false
@@ -233,11 +230,11 @@
                 this.boookListDialog.state = false
                 this.selectedItem = null
             },
-            rent(item) {                                  //KÖlcsönzést dispatch-olja a a store.js-ben a  rentBook async action-el ami
-                this.$store.dispatch("rentBook", item.id);   //meghívja a backend-et, majd a loadBook mutáció újratölti a listát
+            rent(item) {
+                this.$store.dispatch("rentBook", item.id);
                 this.bookListDialogShow(item)
             },
-            giveBackBook(item) {                    ////Könyv visszaadát dispatch-olja a giveBack mutáció pedig menti a books tömben a store.js-ben
+            giveBackBook(item) {
                 this.$store.dispatch("giveBack", item.id);
                 this.bookListDialogShow(item)
             }

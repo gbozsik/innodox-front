@@ -7,7 +7,7 @@
             <v-flex xs12 md6>
                 <v-card>
                     <v-card-text>
-                        <h4 class="welcome" style="font-size:50px; color:lightseagreen">Üdvözlünk a könyv kölcsönzőben</h4>
+                        <h4 class="welcome" style="font-size:50px; color:lightseagreen">Welcome in Digital Library</h4>
                     </v-card-text>
                 </v-card>
             </v-flex>
@@ -72,8 +72,8 @@
 
         methods: {
             saveBook() {
-                this.$store.dispatch("saveBook", this.form.book.bookToSave);
-                this.form.book.bookToSave = {}
+                this.$store.dispatch("saveBook", this.form.book.bookOnForm);
+                this.form.book.bookOnForm = {}
             },
         }
     }

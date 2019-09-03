@@ -4,7 +4,7 @@
             <v-flex xs12 md6>
                 <v-card>
                     <v-card-text>
-                        <h4 class="inputTitle">Felvétel</h4>
+                        <h4 class="bookPageTitle">Add new book, or update</h4>
                         <v-layout wrap>
                             <v-flex xs12 sm6>
                                 <v-select
@@ -26,12 +26,12 @@
                                 </v-select>
                             </v-flex>
                             <v-flex xs12 sm8>
-                                <v-text-field label="Title" required v-model="form.book.bookToSave.title"
+                                <v-text-field label="Title" required v-model="form.book.bookOnForm.title"
                                               :rules="form.validation.rules.title"></v-text-field>
                             </v-flex>
                             <v-flex xs12 sm8>
                                 <v-text-field label="Publisher" required
-                                              v-model="form.book.bookToSave.publisher"
+                                              v-model="form.book.bookOnForm.publisher"
                                               :rules="form.validation.rules.publisher"></v-text-field>
                             </v-flex>
                             <v-card-text class="authorCard">
@@ -61,21 +61,21 @@
                                 <v-flex xs12 sm8>
                                     <v-text-field ref="newAuthorFirstName"
                                                   label="First name" required
-                                                  v-model="form.book.bookToSave.authorModel.firstName"
+                                                  v-model="form.book.bookOnForm.authorModel.firstName"
                                                   @change="newAuthorFieldsChange"
                                                   :rules="form.validation.rules.authorModel"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12 sm8>
                                     <v-text-field ref="newAuthorLastName"
                                                   label="Last name" required
-                                                  v-model="form.book.bookToSave.authorModel.lastName"
+                                                  v-model="form.book.bookOnForm.authorModel.lastName"
                                                   @change="newAuthorFieldsChange"
                                                   :rules="form.validation.rules.authorModel"></v-text-field>
                                 </v-flex>
                                 <v-flex xs12 sm8>
                                     <v-text-field ref="newAuthorAge"
                                                   label="Age" required
-                                                  v-model="form.book.bookToSave.authorModel.age"
+                                                  v-model="form.book.bookOnForm.authorModel.age"
                                                   @change="newAuthorFieldsChange"
                                                   :rules="form.validation.rules.age"
                                                   type="number"></v-text-field>
@@ -86,7 +86,7 @@
                                         :items="selectableCategories"
                                         item-text="name"
                                         v-model="form.book.selectedCategoryModel"
-                                        label="Kategória"
+                                        label="Category"
                                         single-line
                                         :rules="form.validation.rules.category"
                                         @change="categoryVSelectChanged"
@@ -94,22 +94,22 @@
                                 </v-select>
                             </v-flex>
                             <v-flex xs12 sm8>
-                                <v-text-field label="Darabszám" required
-                                              v-model="form.book.bookToSave.quantity"
+                                <v-text-field label="Ammount" required
+                                              v-model="form.book.bookOnForm.quantity"
                                               :rules="form.validation.rules.quantity"
                                               type="number"></v-text-field>
                             </v-flex>
                             <v-flex xs12>
                                 <v-card height="100%">
                                     <v-card-text>
-                                        <h4 class="inputTitle">Előszó</h4>
+                                        <h4 class="inputTitle">Preface</h4>
                                         <v-layout wrap>
                                             <v-flex xs12>
                                                 <v-textarea
                                                         name="preface"
                                                         label=""
-                                                        v-model="form.book.bookToSave.preface"
-                                                        hint="Másold be az előszó tartalmát"
+                                                        v-model="form.book.bookOnForm.preface"
+                                                        hint="Copy here the preface"
                                                         clearable
                                                         rows=12
                                                         :rules="form.validation.rules.preface"
@@ -124,14 +124,14 @@
                             <v-flex xs12>
                                 <v-card height="100%">
                                     <v-card-text>
-                                        <h4 class="inputTitle">Tartalom</h4>
+                                        <h4 class="inputTitle">Content</h4>
                                         <v-layout wrap>
                                             <v-flex xs12>
                                                 <v-textarea
                                                         name="content"
                                                         label=""
-                                                        v-model="form.book.bookToSave.content"
-                                                        hint="Másold ide a könyv tartalmát"
+                                                        v-model="form.book.bookOnForm.content"
+                                                        hint="Copy here the content of the book"
                                                         clearable
                                                         rows=12
                                                         :rules="form.validation.rules.content"
@@ -183,6 +183,11 @@
         margin-bottom: 20px;
         margin-right: 300px;
     }
+    .bookPageTitle {
+        font-size: xx-large;
+        color: darkcyan;
+         text-decoration: underline;
+    }
 </style>
 
 
@@ -210,6 +215,7 @@
         mounted() {
             this.$store.dispatch("getCategories");
             this.$store.dispatch("getAuthors")
+            this.$store.dispatch("getBooks")
         },
         computed: {
             selectableCategories() {
@@ -229,68 +235,80 @@
         methods: {
             bookComboChanged() {
                 if (!_.isEmpty(this.form.book.selectedBook)) {
-                    this.form.book.bookToSave.id = this.form.book.selectedBook.id
-                    this.form.book.bookToSave.title = this.form.book.selectedBook.title
-                    this.form.book.bookToSave.authorModel = this.form.book.selectedBook.authorModel
-                    this.form.book.bookToSave.publisher = this.form.book.selectedBook.publisher
-                    this.form.book.bookToSave.categoryModel = this.form.book.selectedBook.category
-                    this.form.book.bookToSave.content = this.form.book.selectedBook.content
-                    this.form.book.bookToSave.quantity = this.form.book.selectedBook.quantity
-                    this.form.book.bookToSave.preface = this.form.book.selectedBook.preface
+                    this.form.book.bookOnForm.id = this.form.book.selectedBook.id
+                    this.form.book.bookOnForm.title = this.form.book.selectedBook.title
+                    this.form.book.bookOnForm.authorModel = this.form.book.selectedBook.authorModel
+                    this.form.book.bookOnForm.publisher = this.form.book.selectedBook.publisher
+                    this.form.book.bookOnForm.categoryModel = this.form.book.selectedBook.category
+                    this.form.book.bookOnForm.content = this.form.book.selectedBook.content
+                    this.form.book.bookOnForm.quantity = this.form.book.selectedBook.quantity
+                    this.form.book.bookOnForm.preface = this.form.book.selectedBook.preface
                 } else {
                     this.getDefaultData()
                 }
             },
             newAuthorFieldsChange() {
                 this.form.book.selectedAuthor = {}
-                this.form.book.bookToSave.authorModel.id = ''
+                this.form.book.bookOnForm.authorModel.id = ''
             },
             authorVSelectChanged() {
                 if (!_.isEmpty(this.form.book.selectedAuthor)) {
-                    this.form.book.bookToSave.authorModel.id = this.form.book.selectedAuthor.id
-                    this.form.book.bookToSave.authorModel.firstName = this.form.book.selectedAuthor.firstName
-                    this.form.book.bookToSave.authorModel.lastName = this.form.book.selectedAuthor.lastName
-                    this.form.book.bookToSave.authorModel.age = this.form.book.selectedAuthor.age
+                    this.form.book.bookOnForm.authorModel.id = this.form.book.selectedAuthor.id
+                    this.form.book.bookOnForm.authorModel.firstName = this.form.book.selectedAuthor.firstName
+                    this.form.book.bookOnForm.authorModel.lastName = this.form.book.selectedAuthor.lastName
+                    this.form.book.bookOnForm.authorModel.age = this.form.book.selectedAuthor.age
                 }
             },
             categoryVSelectChanged() {
                 if (!_.isEmpty(this.form.book.selectedCategoryModel)) {
-                    this.form.book.bookToSave.categoryModel = this.form.book.selectedCategoryModel
+                    this.form.book.bookOnForm.categoryModel = this.form.book.selectedCategoryModel
                 }
             },
             saveBook() {
+                this.form.book.bookToSave = _.cloneDeep(this.form.book.bookOnForm)
+                this.form.book.bookOnForm.categoryModel = _.cloneDeep(this.form.book.selectedCategoryModel)
+                // this.form.book.bookOnForm.categoryModel = this.form.book.bookOnForm.categoryModel
                 this.$store.dispatch("saveBook", this.form.book.bookToSave);
+                if (this.bookErrorMessage === "") {
+                    this.getDefaultData()
+                    this.bookComboChanged()
+                }
                 console.log("current route: " + this.$router.currentRoute)
             },
             deleteBook() {
-                this.$store.dispatch("deleteBook", this.form.book.bookToSave.id)
+                this.$store.dispatch("deleteBook", this.form.book.bookOnForm.id)
+                this.$store.dispatch("getBooks", this.form.book.bookOnForm.id)
+                this.getDefaultData()
             },
             errorDialogClose() {
                 this.$store.commit('resetBookErrorMessage')
             },
             getDefaultData() {
-                this.form.book.bookToSave.id = ''
-                this.form.book.bookToSave.title = 'default'
+                this.form.book.bookOnForm.id = ''
+                this.form.book.bookOnForm.title = ''
                 this.form.book.selectedAuthor = {}
-                this.form.book.bookToSave.authorModel = {}
-                this.form.book.bookToSave.publisher = ''
-                this.form.book.bookToSave.categoryModel = ''
-                this.form.book.bookToSave.content = ''
-                this.form.book.bookToSave.quantity = ''
-                this.form.book.bookToSave.preface = ''
-            }
+                this.form.book.bookOnForm.authorModel = {}
+                this.form.book.bookOnForm.publisher = ''
+                this.form.book.bookOnForm.categoryModel = ''
+                this.form.book.bookOnForm.content = ''
+                this.form.book.bookOnForm.quantity = ''
+                this.form.book.bookOnForm.preface = ''
+                this.form.book.selectedCategoryModel = {}
+                this.form.book.selectedBook = {}
+            },
+
         },
 
         data() {
-
             return {
                 form: {
                     book: {
                         selectedBook: {},
-                        // categories: [],
+                        bookToSave: {},
                         selectedAuthor: {},
                         selectedCategoryModel: {},
-                        bookToSave: {
+                        settedCategoryModel: {},
+                        bookOnForm: {
                             id: '',
                             title: '',
                             authorModel: {
@@ -298,7 +316,6 @@
                                 firstName: '',
                                 lastName: '',
                                 age: '',
-                                // avatar: srcs[1]
                             },
                             publisher: '',
                             categoryModel: {},

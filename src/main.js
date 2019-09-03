@@ -23,8 +23,8 @@ Object.defineProperty(Vue.prototype, '$http', {
 });
 
 router.beforeEach((to, from, next) => {
-    if(store.state.actualUser.firstName === "Nincs bejelentkezve" || store.state.actualUser.id === 0 && to.name !== 'login'){
-
+    // store.dispatch('getActualUser');
+    if(store.state.actualUser.firstName === "Nincs bejelentkezve" && to.name !== 'login'){
         next({name: "login"});
     }else{
         next();
