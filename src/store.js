@@ -23,7 +23,8 @@ export default new Vuex.Store({
         bookToSave: {},
         errorMessage: '',
         bookErrorMessage: '',
-        logoutMessage: ""
+        logoutMessage: '',
+        loginMessage: ''
     },
 
     getters: {
@@ -74,6 +75,9 @@ export default new Vuex.Store({
         setLogoutMessage: function (state, message) {
             state.logoutMessage = message
         },
+        setLoginMessage: function (state, message) {
+            state.loginMessage = message
+        },
         resetErrorMessage: function (state) {
             state.errorMessage = ''
         },
@@ -82,6 +86,9 @@ export default new Vuex.Store({
         },
         resetLogoutMessage: function (state) {
             state.logoutMessage = ''
+        },
+        resetLoginMessage: function (state) {
+            state.loginMessage = ''
         }
     },
     actions: {
@@ -109,7 +116,6 @@ export default new Vuex.Store({
             try {
                 const {data} = await Axios.post('/book', payload)
                 commit('insertBook', data)
-                // alert('New book has saved')
                 commit('setBookErrorMessage', "New book has saved")
             } catch (e) {
                 commit('setBookErrorMessage', e.response.data.message)
@@ -154,7 +160,7 @@ export default new Vuex.Store({
                 router.push({name: "welcome"})
             } catch (e) {
                 console.log(e)
-                alert('Hibás felhasználónév vagy jelszó')
+                commit('setLogoutMessage', 'Hibás felhasználónév vagy jelszó!')
                 commit('loadActualUser', defaultUser)
             }
         },
@@ -167,7 +173,6 @@ export default new Vuex.Store({
                 console.log(e)
             }
             if (this.state.actualUser.id == 0) {
-                // alert('Sikeres kijelentkezés')
                 commit('setLogoutMessage', "Sikeres kijelentkezés")
             }
         },
