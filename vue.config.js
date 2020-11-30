@@ -5,7 +5,7 @@ module.exports = {                              //fejelsztés alatt proxy-n kere
         https: false,
         hotOnly: false,
         proxy: {
-            '/api': {
+            '^/api': {
                 target: 'http://localhost:9000',
                 ws: true,
                 changeOrigin: true,

@@ -116,7 +116,7 @@ export default new Vuex.Store({
             try {
                 const {data} = await Axios.post('/book', payload)
                 commit('insertBook', data)
-                commit('setBookErrorMessage', "New book has saved")
+                commit('setBookErrorMessage', "Book has been saved")
             } catch (e) {
                 commit('setBookErrorMessage', e.response.data.message)
             }

@@ -48,13 +48,13 @@
                                             <v-list-tile-avatar>
                                                 <img :src="data.item.avatar">
                                             </v-list-tile-avatar>
-                                            {{ data.item.firstName }} {{ data.item.lastName }} {{ bookErrorMessage !== '' }}
+                                            {{ data.item.firstName }} {{ data.item.lastName }}
                                         </template>
                                         <template slot="item" slot-scope="data">
                                             <v-list-tile-avatar>
                                                 <img :src="data.item.avatar">
                                             </v-list-tile-avatar>
-                                            {{ data.item.firstName }} {{ data.item.lastName }} {{ bookErrorMessage !== '' }}
+                                            {{ data.item.firstName }} {{ data.item.lastName }}
                                         </template>
                                     </v-select>
                                 </v-flex>
